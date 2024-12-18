@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:abcd1234@localhost:3306/bank_app"
+}
+
+model User {
+  id            String   @id
+  email         String   @unique
+  balance       Float    @default(1000)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  sentTransactions     Transaction[] @relation("SentTransactions")
+  receivedTransactions Transaction[] @relation("ReceivedTransactions")
+}
+
+model Transaction {
+  id              Int      @id @default(autoincrement())
+  amount          Float
+  sender          User     @relation("SentTransactions", fields: [senderId], references: [id])
+  senderId        String
+  receiver        User     @relation("ReceivedTransactions", fields: [receiverId], references: [id])
+  receiverId      String
+  createdAt       DateTime @default(now())
+}
+
